@@ -1,14 +1,16 @@
 import { ApolloServer, gql } from 'apollo-server'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
-import ResEvent from './resolvers/Tournaments'
+import Team from './resolvers/Team'
+import Tournament from './resolvers/Tournament'
+import Calendar from './resolvers/Calendar'
 import merge from 'lodash/merge'
 
 const graphQLTypeDefs = () => {
   return readFileSync(resolve(__dirname, '../dist', 'schema.graphql'), 'utf8')
 }
 
-const resolvers = merge(ResEvent)
+const resolvers = merge(Team, Tournament, Calendar)
 
 const server = new ApolloServer({
   typeDefs: graphQLTypeDefs(),
@@ -20,6 +22,6 @@ const server = new ApolloServer({
   },
 })
 
-server.listen(1111, '127.0.0.1').then(({ url }) => {
+server.listen(1112, '127.0.0.1').then(({ url }) => {
   console.log(`Server ready at ${url}`)
 })

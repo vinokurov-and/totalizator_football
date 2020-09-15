@@ -1,0 +1,12 @@
+type Query {
+    Calendar(id: ID): Calendar
+    TournamentGame(idTournament: ID, stage: ID): [Calendar]
+}
+
+type Calendar {
+    id: Int!
+    home: Team
+    guest: Team
+    tournament: Tournament
+    stage: String
+}

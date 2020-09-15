@@ -1,5 +1,5 @@
 type Query {
-    Team(id: ID): [Team]
+    Team(id: ID): Team
 }
 
 type Team {
