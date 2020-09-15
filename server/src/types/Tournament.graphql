@@ -1,0 +1,9 @@
+type Query {
+    Tournament(id: ID): Tournament
+}
+
+type Tournament {
+    id: Int!
+    name: String
+}
+

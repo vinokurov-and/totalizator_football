@@ -1,0 +1,36 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "nodemon": "nodemon --exec babel-node index.js",
+    "dev": "npm run build && npm run start",
+    "start": "node dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run make-graphql-schema && babel src -s -d dist",
+    "make-graphql-schema": "node scripts/makeSchema"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/plugin-proposal-decorators": "^7.6.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
+    "apollo-server": "2.17.0",
+    "axios": "^0.19.0",
+    "graphql": "15.3.0",
+    "lodash": "4.17.20",
+    "merge-graphql-schemas": "^1.7.8",
+    "nodemon": "^2.0.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/node": "^7.6.3",
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/runtime": "^7.6.3",
+    "babel-plugin-module-resolver": "^3.2.0"
+  }
+}
