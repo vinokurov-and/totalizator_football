@@ -7,12 +7,16 @@ import App from './App';
 import theme from './theme';
 import * as serviceWorker from './serviceWorker';
 import { StateProvider } from './store/index.js';
+import { ApolloProvider } from '@apollo/client';
+import client from './services/apollo';
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
     <CssBaseline />
     <StateProvider>
-      <App />
+      <ApolloProvider client={client}>
+        <App />
+      </ApolloProvider>
     </StateProvider>
   </ThemeProvider>,
   document.getElementById('root')

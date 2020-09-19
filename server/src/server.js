@@ -4,24 +4,34 @@ import { resolve } from 'path'
 import Team from './resolvers/Team'
 import Tournament from './resolvers/Tournament'
 import Calendar from './resolvers/Calendar'
+import User from './resolvers/User'
 import merge from 'lodash/merge'
+import getUserFromReq from './auth'
 
-const graphQLTypeDefs = () => {
-  return readFileSync(resolve(__dirname, '../dist', 'schema.graphql'), 'utf8')
-}
-
-const resolvers = merge(Team, Tournament, Calendar)
+const resolvers = merge(Team, Tournament, Calendar, User)
 
 const server = new ApolloServer({
-  typeDefs: graphQLTypeDefs(),
+  typeDefs: readFileSync(
+    resolve(__dirname, '../dist', 'schema.graphql'),
+    'utf8',
+  ),
   resolvers,
   dataSources: () => ({}),
-  debug: false,
+  debug: true,
+  context: async ({ req }) => {
+    let user
+    try {
+      user = await getUserFromReq(req)
+    } catch (e) {
+      return { req, user: null }
+    }
+    return { req, user }
+  },
   cors: {
-    origin: 'http://localhost:8080',
+    origin: 'http://localhost:3000',
   },
 })
 
-server.listen(1112, '127.0.0.1').then(({ url }) => {
+server.listen(1113, '127.0.0.1').then(({ url }) => {
   console.log(`Server ready at ${url}`)
 })

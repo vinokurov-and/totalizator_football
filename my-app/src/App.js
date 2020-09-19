@@ -3,7 +3,7 @@ import './App.css';
 import Authorization from './containers/Authorization';
 
 function App() {
-  return <Authorization />
+  return <Authorization />;
 }
 
 export default App;
