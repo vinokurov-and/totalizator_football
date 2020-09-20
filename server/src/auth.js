@@ -68,15 +68,11 @@ const clearSession = (id) => {
 
 async function getUserFromReq(req) {
   const { headers } = req
-  console.log('123');
   if (headers) {
-    console.log('asd');
     const { token, id, exit } = headers
-    console.log("getUserFromReq -> headers", headers)
     if (token && id) {
       const user = await getUser(id)
       if (exit) {
-        console.log("getUserFromReq -> user", user)
         if (user.access_token === token && user.mid === id)
         {
           await clearSession(id);

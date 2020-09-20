@@ -33,8 +33,6 @@ export default () => {
   const [requestAuth, { called, loading: loadingRequestAuth, data: responseRequestAuth }] = useLazyQuery(GET_USER, {
     fetchPolicy: 'no-cache',
   });
-  console.log('loadingRequestAuth', loadingRequestAuth);
-  console.log('responseRequestAuth', responseRequestAuth);
 
   const { loading: loadingVk, authentification, user } = authorization;
 
@@ -60,14 +58,12 @@ export default () => {
   const handleAuth = useCallback(() => {
     dispatch({ type: LOGIN_REQUEST });
     VK.Auth.login(response => {
-      console.log('handleAuth -> response', response);
       if (response.session) {
         const { token, id } = getAuthParamsLS();
         const { mid, sid, first_name, last_name } = response.session;
         if (!token || !id) {
           setAuthParamsLS(mid, sid);
         }
-        console.log('Asdasd');
         getUser(mid, token || sid, `${first_name} ${last_name}`);
       } else {
         dispatch({
@@ -85,9 +81,7 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    debugger;
     if (!loadingRequestAuth && responseRequestAuth) {
-      debugger;
       dispatch({
         type: LOGIN_SUCCESS,
         payload: { ...responseRequestAuth.User },

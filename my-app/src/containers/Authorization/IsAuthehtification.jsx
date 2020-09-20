@@ -20,7 +20,6 @@ const GET_USER = gql`
 export default ({ user }) => {
   const [requestExit, { called, loading, data }] = useLazyQuery(GET_USER, { fetchPolicy: 'no-cache' });
   const { dispatch, state } = useState();
-  console.log('state', state);
 
   const handleExit = () => {
     const { token, id } = getAuthParamsLS();
@@ -41,7 +40,6 @@ export default ({ user }) => {
   };
 
   useEffect(() => {
-    debugger;
     if (called) {
       if (!loading) {
         if (data) {
