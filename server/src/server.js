@@ -1,4 +1,4 @@
-import { ApolloServer, gql } from 'apollo-server'
+import { ApolloServer, AuthenticationError, gql } from 'apollo-server'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import Team from './resolvers/Team'
@@ -19,13 +19,15 @@ const server = new ApolloServer({
   dataSources: () => ({}),
   debug: true,
   context: async ({ req }) => {
-    let user
     try {
-      user = await getUserFromReq(req)
+      const user = await getUserFromReq(req)
+      return { req, user }
     } catch (e) {
-      return { req, user: null }
+      throw new AuthenticationError(e.message)
     }
-    return { req, user }
+  },
+  formatError: (err) => {
+    return err
   },
   cors: {
     origin: 'http://localhost:3000',

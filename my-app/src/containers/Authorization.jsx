@@ -12,6 +12,7 @@ import {
 } from '../store/actions.js';
 import IsAuth from './Authorization/IsAuthehtification';
 import IsNonAuth from './Authorization/IsNonAuthehntitfication';
+import { setAuthParamsLS, getAuthParamsLS } from '../utils/localStorage';
 
 const VK = window.VK;
 
@@ -29,7 +30,10 @@ export default () => {
     state: { authorization },
     dispatch,
   } = useStore();
-  const [requestAuth, { loading: loadingRequestAuth, data: responseRequestAuth }] = useLazyQuery(GET_USER);
+  const [requestAuth, { called, loading: loadingRequestAuth, data: responseRequestAuth }] = useLazyQuery(GET_USER, {
+    fetchPolicy: 'no-cache',
+  });
+  console.log('loadingRequestAuth', loadingRequestAuth);
   console.log('responseRequestAuth', responseRequestAuth);
 
   const { loading: loadingVk, authentification, user } = authorization;
@@ -37,16 +41,15 @@ export default () => {
   const loading = loadingVk || loadingRequestAuth;
 
   const getUser = useCallback(
-    (id, token, name) => {
+    (id, token) => {
       requestAuth({
         variables: {
           id,
         },
         context: {
           headers: {
-            authorization: token,
+            token,
             id,
-            name,
           },
         },
       });
@@ -57,38 +60,41 @@ export default () => {
   const handleAuth = useCallback(() => {
     dispatch({ type: LOGIN_REQUEST });
     VK.Auth.login(response => {
+      console.log('handleAuth -> response', response);
       if (response.session) {
-        const token = localStorage.getItem('t');
-        const id = localStorage.getItem('i');
-        if (!token && !id) {
-          localStorage.setItem('t', response.session.sid);
-          localStorage.setItem('i', response.session.mid);
+        const { token, id } = getAuthParamsLS();
+        const { mid, sid, first_name, last_name } = response.session;
+        if (!token || !id) {
+          setAuthParamsLS(mid, sid);
         }
-        getUser(
-          response.session.mid,
-          token || response.session.sid,
-          `${response.session.user.first_name} ${response.session.user.last_name}`
-        );
+        console.log('Asdasd');
+        getUser(mid, token || sid, `${first_name} ${last_name}`);
       } else {
         dispatch({
           type: LOGIN_FAIL,
         });
+
         localStorage.clear();
       }
     });
   }, [dispatch]);
 
   useEffect(() => {
-    const id = localStorage.getItem('i');
-    const token = localStorage.getItem('t');
+    const { token, id } = getAuthParamsLS();
     id && token && getUser(id, token);
   }, []);
 
   useEffect(() => {
+    debugger;
     if (!loadingRequestAuth && responseRequestAuth) {
+      debugger;
       dispatch({
         type: LOGIN_SUCCESS,
-        payload: responseRequestAuth.User,
+        payload: { ...responseRequestAuth.User },
+      });
+    } else if (!responseRequestAuth) {
+      dispatch({
+        type: LOGIN_FAIL,
       });
     }
   }, [loadingRequestAuth, responseRequestAuth]);

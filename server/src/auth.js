@@ -20,20 +20,22 @@ const createUser = async (token, name, id) => {
 
 const newTimestamp = () => moment().add(1, 'day').unix().toString()
 
-const verifyVk = async (response, token, isUpdate) => {
-  console.log('verifyVk -> response', response)
+const verifyVk = async (response, token, isUpdate, isUpdateToken) => {
   if (response) {
     const { first_name, last_name, id } = response[0]
     const name = `${first_name} ${last_name}`
-    if (isUpdate) {
-      const updateUser = await User.update(
-        { expire: newTimestamp() },
-        {
-          where: {
-            mid: id,
-          },
+    if (isUpdate || isUpdateToken) {
+      const newData = {
+        expire: newTimestamp(),
+      }
+      if (isUpdateToken) {
+        newData.access_token = token
+      }
+      await User.update(newData, {
+        where: {
+          mid: id,
         },
-      )
+      })
       const user = await getUser(id)
       return user
     }
@@ -53,25 +55,53 @@ const getUser = async (id) => {
   return user
 }
 
+const clearSession = (id) => {
+  return User.update(
+    { expire: '', access_token: '' },
+    {
+      where: {
+        mid: id,
+      },
+    },
+  )
+}
+
 async function getUserFromReq(req) {
   const { headers } = req
+  console.log('123');
   if (headers) {
-    const { authorization, id } = headers
-    if (authorization && id) {
+    console.log('asd');
+    const { token, id, exit } = headers
+    console.log("getUserFromReq -> headers", headers)
+    if (token && id) {
       const user = await getUser(id)
-      console.log(moment().unix())
-      const isUpdate = user && user.expire < moment().unix()
-      if (!user || isUpdate) {
+      if (exit) {
+        console.log("getUserFromReq -> user", user)
+        if (user.access_token === token && user.mid === id)
+        {
+          await clearSession(id);
+          return user;
+        }
+        return null;
+      }
+      const isUpdate = user && user.expire && user.expire < moment().unix()
+      if (!user || isUpdate || !user.access_token) {
+        const verify = await requestVk(token)
+        console.log('getUserFromReq -> verify', verify)
         console.log('Проверка пользователя в БД ВК')
-        const verify = await requestVk(authorization)
         const result = await verifyVk(
           verify.data.response,
-          authorization,
+          token,
           isUpdate,
+          !user.access_token,
         )
         return result
       } else {
-        console.log(user.name, 'Пользователь найден')
+        if (user.access_token !== token) {
+          console.log('Токен не совпадает')
+          await clearSession(id)
+          throw new Error('Токен не совпадает')
+        }
         return user
       }
     }
