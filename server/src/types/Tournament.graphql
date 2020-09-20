@@ -1,5 +1,6 @@
 type Query {
     Tournament(id: ID): Tournament
+    Tournaments: [Tournament]
 }
 
 type Tournament {

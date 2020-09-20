@@ -1,29 +1,22 @@
 // import { Button } from '@material-ui/core'
 import React, { useEffect, useCallback } from 'react';
-import { useLazyQuery, gql } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import styled from 'styled-components';
 import useStore from '../hooks/useStore';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import PanelElement from './PanelElement';
 import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   //   LOGIN_EXIT,
 } from '../store/actions.js';
+import { GET_USER } from '../sources/query';
 import IsAuth from './Authorization/IsAuthehtification';
 import IsNonAuth from './Authorization/IsNonAuthehntitfication';
 import { setAuthParamsLS, getAuthParamsLS } from '../utils/localStorage';
+import Loader from '../components/Loader';
 
 const VK = window.VK;
-
-const GET_USER = gql`
-  query($id: ID) {
-    User(id: $id) {
-      isAdmin
-      name
-    }
-  }
-`;
 
 export default () => {
   const {
@@ -35,6 +28,7 @@ export default () => {
   });
 
   const { loading: loadingVk, authentification, user } = authorization;
+  console.log('authorization', authorization);
 
   const loading = loadingVk || loadingRequestAuth;
 
@@ -96,15 +90,20 @@ export default () => {
   if (loading)
     return (
       <Container>
-        <CircularProgress />
+        <Loader />
       </Container>
     );
 
-  return <Container>{authentification ? <IsAuth user={user} /> : <IsNonAuth handleAuth={handleAuth} />}</Container>;
+  return (
+    <Container>
+      {user?.isAdmin && <PanelElement />}
+      {authentification ? <IsAuth user={user} /> : <IsNonAuth handleAuth={handleAuth} />}
+    </Container>
+  );
 };
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   padding: 2em;
 `;

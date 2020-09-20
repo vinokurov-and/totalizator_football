@@ -11,6 +11,10 @@ const resolvers = {
       })
       return tournament
     },
+    Tournaments: async (parent, { id }, context, info) => {
+      const allTournaments = await Tournament.findAll()
+      return allTournaments
+    },
   },
 }
 

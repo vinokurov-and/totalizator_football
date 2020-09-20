@@ -4,18 +4,10 @@ import { useLazyQuery, gql } from '@apollo/client';
 import useState from '../../hooks/useStore';
 import { Button } from '@material-ui/core';
 import { getAuthParamsLS } from '../../utils/localStorage';
+import { GET_USER } from '../../sources/query';
 import { LOGIN_REQUEST, LOGIN_EXIT, LOGIN_FAIL } from '../../store/actions.js';
 
 const VK = window.VK;
-
-const GET_USER = gql`
-  query($id: ID) {
-    User(id: $id) {
-      isAdmin
-      name
-    }
-  }
-`;
 
 export default ({ user }) => {
   const [requestExit, { called, loading, data }] = useLazyQuery(GET_USER, { fetchPolicy: 'no-cache' });
