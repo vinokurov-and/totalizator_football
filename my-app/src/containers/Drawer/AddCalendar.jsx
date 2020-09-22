@@ -1,18 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/client';
-import { Button } from '@material-ui/core';
+import { useQuery, useLazyQuery } from '@apollo/client';
 import DrawerTemplate from '../../components/DrawerTemplate';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
-import { GET_TOURNAMENTS } from '../../sources/query';
+import { Form } from 'react-final-form';
+import { GET_TOURNAMENTS, GET_TOURS } from '../../sources/query';
 import Loader from '../../components/Loader';
+import AddCalendarForm from '../Forms/AddCalendarForm';
+import createDecorator from 'final-form-calculate';
 
 export default ({ ...rest }) => {
-  console.log('rest', rest);
   const { called, loading, error, data } = useQuery(GET_TOURNAMENTS);
+  const [getTours, { called: calledTours, data: dataTOurs }] = useLazyQuery(GET_TOURS);
 
   const tournaments = called && error ? [] : data?.Tournaments || [];
+
+  const tours = [];
+
+  const handleSubmit = values => {
+    console.log(values);
+  };
+
+  const decorators = createDecorator({
+    field: 'tournament',
+  });
 
   return (
     <DrawerTemplate {...rest}>
@@ -20,50 +30,19 @@ export default ({ ...rest }) => {
         {loading ? (
           <Loader />
         ) : (
-          <>
-            <Title>Добавить матчи в расписание</Title>
-            <Autocomplete
-              freeSolo
-              id="tournament"
-              options={tournaments.map(option => option.name)}
-              renderInput={params => (
-                <TextField {...params} label="Название турнира" margin="normal" variant="outlined" />
-              )}
-            />
-            <Autocomplete
-              freeSolo
-              id=""
-              options={tournaments.map(option => option.name)}
-              renderInput={params => (
-                <TextField {...params} label="Название турнира" margin="normal" variant="outlined" />
-              )}
-            />
-            <Footer>
-              <Button variant="contained">Добавить игры</Button>
-              <Button onClick={rest.toggle(false)} variant="contained">
-                Закрыть
-              </Button>
-            </Footer>
-          </>
+          <Form
+            decorators={[decorators]}
+            onSubmit={handleSubmit}
+            onClose={rest.toggle(false)}
+            tournaments={tournaments}
+            tours={tours}
+            render={AddCalendarForm}
+          />
         )}
       </Container>
     </DrawerTemplate>
   );
 };
-
-const Title = styled.div`
-  font-size: 1.3em;
-  font-weight: bold;
-  color: #111;
-`;
-
-const Footer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  button:not(:first-child) {
-    margin-left: 1em;
-  }
-`;
 
 const Container = styled.div`
   width: 50vw;

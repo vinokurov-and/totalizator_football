@@ -1,0 +1,7 @@
+type Query {
+    Tours(id: ID): [Tour]
+}
+
+type Tour {
+    name: String
+}

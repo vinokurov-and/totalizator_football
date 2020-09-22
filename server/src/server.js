@@ -5,10 +5,11 @@ import Team from './resolvers/Team'
 import Tournament from './resolvers/Tournament'
 import Calendar from './resolvers/Calendar'
 import User from './resolvers/User'
+import Tour from './resolvers/Tour'
 import merge from 'lodash/merge'
 import getUserFromReq from './auth'
 
-const resolvers = merge(Team, Tournament, Calendar, User)
+const resolvers = merge(Team, Tournament, Calendar, User, Tour)
 
 const server = new ApolloServer({
   typeDefs: readFileSync(
