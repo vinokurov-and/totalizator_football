@@ -22,8 +22,8 @@ export const GET_TOURNAMENTS = gql`
 
 // TOURS
 export const GET_TOURS = gql`
-  query {
-    Tours {
+  query($id: ID) {
+    Tours(id: $id) {
       name
     }
   }

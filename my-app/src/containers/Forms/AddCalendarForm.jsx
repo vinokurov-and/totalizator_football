@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import { Field, Form } from 'react-final-form';
 import { AutoCompleteWrapper } from '../../components/AutocompleteWrapper';
+import { isNull, isObject, isUndefined } from '../../utils/checkup';
 
-export default ({ onClose, tournaments=[], tours=[], handleSubmit }) => {
-console.log("tournaments", tournaments)
+const isSelectable = value => !isUndefined(value) && !isNull(value) && isObject(value);
+
+export default ({ onClose, tournaments = [], tours = [], handleSubmit, values, getTours, clearTours, form }) => {
+  useEffect(() => {
+    if (isSelectable(values.tournament)) {
+      getTours({
+        variables: {
+          id: values.tournament.value,
+        },
+      });
+    } else {
+      clearTours();
+    }
+  }, [values.tournament, getTours, clearTours]);
+
   return (
     <Container>
       <Title>Добавить матчи в расписание</Title>
@@ -31,14 +45,6 @@ console.log("tournaments", tournaments)
         component={AutoCompleteWrapper}
       />
 
-      {/* <Autocomplete
-        freeSolo
-        id="tour"
-        options={tournaments.map(option => option.name)}
-        renderInput={params => (
-          <Field component={TextField} name="tour" {...params} label="Тур" margin="normal" variant="filled" />
-        )}
-      /> */}
       <Footer>
         <Button onClick={handleSubmit} variant="contained">
           Добавить игры
