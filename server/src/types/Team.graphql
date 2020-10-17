@@ -1,5 +1,6 @@
 type Query {
     Team(id: ID): Team
+    Teams: [Team]
 }
 
 type Team {

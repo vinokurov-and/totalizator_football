@@ -1,4 +1,4 @@
-import { useLazyQuery, gql } from '@apollo/client';
+import { gql } from '@apollo/client';
 
 // USER
 export const GET_USER = gql`
@@ -24,6 +24,16 @@ export const GET_TOURNAMENTS = gql`
 export const GET_TOURS = gql`
   query($id: ID) {
     Tours(id: $id) {
+      name
+    }
+  }
+`;
+
+// TEAMS
+export const GET_TEAMS = gql`
+  query {
+    Teams {
+      id
       name
     }
   }

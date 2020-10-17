@@ -1,13 +1,28 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
-import { Field, Form } from 'react-final-form';
+import { Field } from 'react-final-form';
 import { AutoCompleteWrapper } from '../../components/AutocompleteWrapper';
+import { FieldArray } from 'react-final-form-arrays';
+import AddCircleOutlineTwoToneIcon from '@material-ui/icons/AddCircleOutlineTwoTone';
+import RemoveCircleOutlineTwoToneIcon from '@material-ui/icons/RemoveCircleOutlineTwoTone';
 import { isNull, isObject, isUndefined } from '../../utils/checkup';
 
 const isSelectable = value => !isUndefined(value) && !isNull(value) && isObject(value);
 
-export default ({ onClose, tournaments = [], tours = [], handleSubmit, values, getTours, clearTours, form }) => {
+export default ({
+  onClose,
+  tournaments = [],
+  tours = [],
+  handleSubmit,
+  values,
+  getTours,
+  getTeams,
+  clearTours,
+  clearTeams,
+  teams = [],
+  // form: { mutators },
+}) => {
   useEffect(() => {
     if (isSelectable(values.tournament)) {
       getTours({
@@ -17,8 +32,17 @@ export default ({ onClose, tournaments = [], tours = [], handleSubmit, values, g
       });
     } else {
       clearTours();
+      clearTeams();
     }
-  }, [values.tournament, getTours, clearTours]);
+  }, [values.tournament, getTours, clearTours, clearTeams]);
+
+  useEffect(() => {
+    if (isSelectable(values.tour)) {
+      getTeams();
+    } else {
+      clearTeams();
+    }
+  }, [values.tour, clearTeams, getTeams]);
 
   return (
     <Container>
@@ -45,6 +69,51 @@ export default ({ onClose, tournaments = [], tours = [], handleSubmit, values, g
         component={AutoCompleteWrapper}
       />
 
+      <FieldArray name="game">
+        {({ fields }) => (
+          <div>
+            {fields.map((name, index) => (
+              <Row key={name}>
+                <Item>
+                  <Field
+                    freeSolo
+                    name={`${name}.firstTeam`}
+                    label="Команда 1"
+                    margin="normal"
+                    variant="filled"
+                    fullWidth
+                    options={teams
+                      .map(option => ({ value: option.id, label: option.name }))
+                      .filter(item => item.value !== values.secondTeam?.value)}
+                    component={AutoCompleteWrapper}
+                  />
+                </Item>
+                <Item>
+                  <Field
+                    freeSolo
+                    name={`${name}.secondTeam`}
+                    fullWidth
+                    label="Команда 2"
+                    margin="normal"
+                    variant="filled"
+                    options={teams
+                      .map(option => ({ value: option.id, label: option.name }))
+                      .filter(item => item.value !== values.firstTeam?.value)}
+                    component={AutoCompleteWrapper}
+                  />
+                </Item>
+                <CotnainerIconRemove>
+                  <RemoveCircleOutlineTwoToneIcon onClick={() => fields.remove(index)} />
+                </CotnainerIconRemove>
+              </Row>
+            ))}
+            <CotnainerIcon>
+              <AddCircleOutlineTwoToneIcon onClick={() => fields.push({ firstName: '', lastName: '' })} />
+            </CotnainerIcon>
+          </div>
+        )}
+      </FieldArray>
+
       <Footer>
         <Button onClick={handleSubmit} variant="contained">
           Добавить игры
@@ -57,10 +126,46 @@ export default ({ onClose, tournaments = [], tours = [], handleSubmit, values, g
   );
 };
 
+const CotnainerIcon = styled.div`
+  padding: 10px;
+  margin-left: -10px;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  right: -100%;
+  transform: translateX(-50%);
+`;
+
+const CotnainerIconRemove = styled(CotnainerIcon)`
+  padding: 0;
+  margin-left: 10px;
+  bottom: -5px;
+  position: relative;
+  right: -2px;
+  transform: none;
+`;
+
 const Title = styled.div`
   font-size: 1.3em;
   font-weight: bold;
   color: #111;
+`;
+
+const Item = styled.div`
+  width: 98%;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8px;
+  ${Item}:first-child {
+    margin-right: 4px;
+  }
+  ${Item}:last-child {
+    margin-left: 4px;
+  }
 `;
 
 const Footer = styled.div`

@@ -11,6 +11,10 @@ const resolvers = {
       })
       return team
     },
+    Teams: async (parent, {}, context, info) => {
+      const teams = await Team.findAll()
+      return teams
+    },
   },
 }
 

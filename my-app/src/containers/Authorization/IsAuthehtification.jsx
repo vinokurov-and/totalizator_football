@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useLazyQuery, gql } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import useState from '../../hooks/useStore';
 import { Button } from '@material-ui/core';
 import { getAuthParamsLS } from '../../utils/localStorage';
 import { GET_USER } from '../../sources/query';
-import { LOGIN_REQUEST, LOGIN_EXIT, LOGIN_FAIL } from '../../store/actions.js';
+import { LOGIN_EXIT, LOGIN_FAIL } from '../../store/actions.js';
 
-const VK = window.VK;
+// const VK = window.VK;
 
 export default ({ user }) => {
   const [requestExit, { called, loading, data }] = useLazyQuery(GET_USER, { fetchPolicy: 'no-cache' });
-  const { dispatch, state } = useState();
+  const { dispatch } = useState();
 
   const handleExit = () => {
     const { token, id } = getAuthParamsLS();
@@ -41,7 +41,7 @@ export default ({ user }) => {
         }
       }
     }
-  }, [loading, data, called]);
+  }, [loading, data, called, dispatch]);
 
   return (
     <ContainerCol>

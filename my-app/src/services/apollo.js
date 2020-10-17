@@ -1,4 +1,4 @@
-import { ApolloClient, HttpLink, ApolloLink, InMemoryCache, concat, useLazyQuery } from '@apollo/client';
+import { ApolloClient, HttpLink, ApolloLink, InMemoryCache, concat } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { getAuthParamsLS } from '../utils/localStorage';
 

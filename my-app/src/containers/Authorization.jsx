@@ -23,7 +23,7 @@ export default () => {
     state: { authorization },
     dispatch,
   } = useStore();
-  const [requestAuth, { called, loading: loadingRequestAuth, data: responseRequestAuth }] = useLazyQuery(GET_USER, {
+  const [requestAuth, { loading: loadingRequestAuth, data: responseRequestAuth }] = useLazyQuery(GET_USER, {
     fetchPolicy: 'no-cache',
   });
 
@@ -67,12 +67,12 @@ export default () => {
         localStorage.clear();
       }
     });
-  }, [dispatch]);
+  }, [dispatch, getUser]);
 
   useEffect(() => {
     const { token, id } = getAuthParamsLS();
     id && token && getUser(id, token);
-  }, []);
+  }, [getUser]);
 
   useEffect(() => {
     if (!loadingRequestAuth && responseRequestAuth) {
@@ -85,7 +85,7 @@ export default () => {
         type: LOGIN_FAIL,
       });
     }
-  }, [loadingRequestAuth, responseRequestAuth]);
+  }, [loadingRequestAuth, responseRequestAuth, dispatch]);
 
   if (loading)
     return (
