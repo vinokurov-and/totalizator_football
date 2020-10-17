@@ -3,6 +3,20 @@ type Query {
     TournamentGame(idTournament: ID, stage: ID): [Calendar]
 }
 
+input CalendarInput {
+    homeId: Int
+    guestId: Int
+    guest: String
+    home: String
+    tournamentId: Int
+    tournament: String
+    stage: String!
+}
+
+type Mutation {
+    addGames(input: [CalendarInput]): [Calendar]
+}
+
 type Calendar {
     id: Int!
     home: Team

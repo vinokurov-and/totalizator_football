@@ -3,6 +3,10 @@ type Query {
     Tournaments: [Tournament]
 }
 
+type Mutation {
+    addTournament(name: String): [Tournament]
+}
+
 type Tournament {
     id: Int!
     name: String

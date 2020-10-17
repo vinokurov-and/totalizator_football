@@ -21,7 +21,6 @@ export default ({
   clearTours,
   clearTeams,
   teams = [],
-  // form: { mutators },
 }) => {
   useEffect(() => {
     if (isSelectable(values.tournament)) {
@@ -30,19 +29,10 @@ export default ({
           id: values.tournament.value,
         },
       });
-    } else {
-      clearTours();
-      clearTeams();
     }
   }, [values.tournament, getTours, clearTours, clearTeams]);
 
-  useEffect(() => {
-    if (isSelectable(values.tour)) {
-      getTeams();
-    } else {
-      clearTeams();
-    }
-  }, [values.tour, clearTeams, getTeams]);
+  const disabledAddGames = !values.tournament || !values.tour || !values.game?.[0].home || !values.game?.[0].guest;
 
   return (
     <Container>
@@ -54,7 +44,7 @@ export default ({
         label="Название турнира"
         margin="normal"
         variant="filled"
-        options={tournaments.map(option => ({ value: option.id, label: option.name }))}
+        options={tournaments.filter(item => item.name).map(option => ({ value: option.id, label: option.name }))}
         component={AutoCompleteWrapper}
       />
 
@@ -65,7 +55,7 @@ export default ({
         label="Тур"
         margin="normal"
         variant="filled"
-        options={tours.map(option => ({ value: option.id, label: option.name }))}
+        options={tours.filter(item => item.name).map(option => ({ value: option.name, label: option.name }))}
         component={AutoCompleteWrapper}
       />
 
@@ -77,28 +67,30 @@ export default ({
                 <Item>
                   <Field
                     freeSolo
-                    name={`${name}.firstTeam`}
+                    name={`${name}.home`}
                     label="Команда 1"
                     margin="normal"
                     variant="filled"
                     fullWidth
                     options={teams
+                      .filter(item => item.name)
                       .map(option => ({ value: option.id, label: option.name }))
-                      .filter(item => item.value !== values.secondTeam?.value)}
+                      .filter(item => item.value !== values.game[index].guest?.value)}
                     component={AutoCompleteWrapper}
                   />
                 </Item>
                 <Item>
                   <Field
                     freeSolo
-                    name={`${name}.secondTeam`}
+                    name={`${name}.guest`}
                     fullWidth
                     label="Команда 2"
                     margin="normal"
                     variant="filled"
                     options={teams
+                      .filter(item => item.name)
                       .map(option => ({ value: option.id, label: option.name }))
-                      .filter(item => item.value !== values.firstTeam?.value)}
+                      .filter(item => item.value !== values.game[index].home?.value)}
                     component={AutoCompleteWrapper}
                   />
                 </Item>
@@ -108,14 +100,14 @@ export default ({
               </Row>
             ))}
             <CotnainerIcon>
-              <AddCircleOutlineTwoToneIcon onClick={() => fields.push({ firstName: '', lastName: '' })} />
+              <AddCircleOutlineTwoToneIcon onClick={() => fields.push({ home: '', guest: '' })} />
             </CotnainerIcon>
           </div>
         )}
       </FieldArray>
 
       <Footer>
-        <Button onClick={handleSubmit} variant="contained">
+        <Button onClick={handleSubmit} disabled={disabledAddGames} variant="contained">
           Добавить игры
         </Button>
         <Button onClick={onClose} variant="contained">

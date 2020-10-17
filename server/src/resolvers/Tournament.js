@@ -16,6 +16,17 @@ const resolvers = {
       return allTournaments
     },
   },
+  Mutation: {
+    addTournament: async (_, { name }, { dataSources }) => {
+      const tournament = await Tournament.create(
+        {
+          name: name,
+        },
+        { fields: ['name'] },
+      )
+      return tournament
+    },
+  },
 }
 
 export default resolvers
