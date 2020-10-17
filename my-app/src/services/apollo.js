@@ -18,9 +18,9 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-const logoutLink = onError(({ networkError }) => {
-  console.log('logoutLink -> networkError', JSON.stringify(networkError));
-  if (networkError.result.errors[0].extensions.code === 'UNAUTHENTICATED') {
+const logoutLink = onError(data => {
+  const { networkError } = data;
+  if (networkError?.result?.errors?.[0].extensions.code === 'UNAUTHENTICATED') {
     localStorage.clear();
   }
 });

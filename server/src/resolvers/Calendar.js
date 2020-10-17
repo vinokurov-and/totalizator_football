@@ -2,6 +2,7 @@ import Calendar from '../db/Model/Calendar'
 import Team from '../db/Model/Team'
 import Tournament from '../db/Model/Tournament'
 import { Op } from 'sequelize'
+import { ForbiddenError } from 'apollo-server'
 
 // import SqlString from 'sqlstring'
 
@@ -34,9 +35,10 @@ const resolvers = {
     },
   },
   Mutation: {
-    addGames: async (_, { input }, { dataSources }) => {
+    addGames: async (_, { input }, { user }) => {
+      if (user.isAdmin) throw new ForbiddenError('not permitted')
+
       const data = [...input]
-      console.log('data', data)
 
       for (const item of data) {
         if (item.tournament && !item.tournamentId) {
