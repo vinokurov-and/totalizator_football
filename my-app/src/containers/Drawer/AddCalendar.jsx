@@ -22,21 +22,20 @@ export default ({ ...rest }) => {
     fetchPolicy: 'no-cache',
   });
 
-  const [addGames, { called: calledSetTournament, data: dataSetTournament, error: errorSetTournament }] = useMutation(
-    SET_GAMES,
-    {
-      onCompleted: () => {
-        rest.toggle(false)();
-      },
-    }
-  );
+  const [addGames, { error: errorSetTournament }] = useMutation(SET_GAMES, {
+    onCompleted: () => {
+      rest.toggle(false)();
+    },
+  });
 
   const [tours, setTours] = useState([]);
   const [teams, setTeams] = useState([]);
 
+  const { isOpen } = rest;
+
   useEffect(() => {
-    rest.isOpen && getTeams();
-  }, [rest.isOpen && getTeams]);
+    isOpen && getTeams();
+  }, [isOpen, getTeams]);
 
   useEffect(() => {
     calledTours && errorTours ? setTours([]) : setTours(dataTOurs?.Tours || []);
