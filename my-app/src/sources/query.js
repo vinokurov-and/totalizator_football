@@ -39,4 +39,23 @@ export const GET_TEAMS = gql`
   }
 `;
 
-
+// Получить новые игры турниров
+export const GET_NEW_GAMES_TOURNAMENTS = gql`
+  query {
+    NewGamesTournaments {
+      id
+      name
+      tour {
+        name
+        game {
+          home {
+            name
+          }
+          guest {
+            name
+          }
+        }
+      }
+    }
+  }
+`;

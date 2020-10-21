@@ -9,7 +9,6 @@ import * as serviceWorker from './serviceWorker';
 import { StateProvider } from './store/index.js';
 import { ApolloProvider } from '@apollo/client';
 import client from './services/apollo';
-import ErrorBoundary from './components/ErrorBoundary';
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>

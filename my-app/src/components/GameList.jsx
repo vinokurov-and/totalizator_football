@@ -8,14 +8,21 @@ const data = [
   { home: 'a2sd', guest: '211' },
 ];
 
-export default ({ tournament, game }) => {
+export default ({ name, tour }) => {
   return (
     <Container>
-      <Title>{tournament?.name || 'Турнир'} </Title>
-      <Subtitle>Выберите команду победителя</Subtitle>
-      {data.map(item => (
-        <GameLine {...item} />
-      ))}
+      <Title>{name || 'Турнир'} </Title>
+      <Text>Выберите команду победителя</Text>
+      {tour.map(itemTour => {
+        return (
+          <>
+            <Subtitle>{itemTour.name}</Subtitle>
+            {itemTour.game.map(itemGame => (
+              <GameLine home={itemGame.home?.name} guest={itemGame.guest?.name} />
+            ))}
+          </>
+        );
+      })}
     </Container>
   );
 };
@@ -32,7 +39,12 @@ const Title = styled.h2`
   text-align: center;
 `;
 
-const Subtitle = styled.p`
+const Subtitle = styled.h3`
+  font-size: 14px;
+  text-align: center;
+`;
+
+const Text = styled.p`
   color: gray;
   margin-bottom: 16px;
   text-align: center;

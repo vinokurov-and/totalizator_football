@@ -70,7 +70,8 @@ async function getUserFromReq(req) {
   const { headers } = req
   if (headers) {
     const { token, id, exit } = headers
-    if (token && id) {
+    console.log("getUserFromReq -> headers", headers)
+    if (token && id && id !== 'null') {
       const user = await getUser(id)
       if (exit) {
         if (user.access_token === token && user.mid === id)
@@ -83,7 +84,7 @@ async function getUserFromReq(req) {
       const isUpdate = user && user.expire && user.expire < moment().unix()
       if (!user || isUpdate || !user.access_token) {
         const verify = await requestVk(token)
-        console.log('getUserFromReq -> verify', verify)
+        // console.log('getUserFromReq -> verify', verify)
         console.log('Проверка пользователя в БД ВК')
         const result = await verifyVk(
           verify.data.response,

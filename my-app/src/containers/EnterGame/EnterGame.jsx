@@ -1,23 +1,37 @@
 import { Grid } from '@material-ui/core';
 import React from 'react';
+import styled from 'styled-components';
 import Paper from '@material-ui/core/Paper';
 import EnterGamesForm from '../Forms/EnterGamesForm';
+import { GET_NEW_GAMES_TOURNAMENTS } from '../../sources/query';
+import { useQuery } from '@apollo/client';
 
 export default () => {
-//   const [getTeams, { called: calledTeams, data: dataTeams, error: errorTeams }] = useLazyQuery(GET_TEAMS, {
-//     fetchPolicy: 'no-cache',
-//   });
+  const { called: calledGetNewGamesT, data: dataGetNewGamesT, error: errorGetNewGamesT, loading } = useQuery(
+    GET_NEW_GAMES_TOURNAMENTS
+    // {
+    //   fetchPolicy: 'no-cache',
+    // }
+  );
 
+  // const { called, loading, error, data } = useQuery(GET_TOURNAMENTS);
+
+  if (loading) return 'Загрузка...';
+  console.log('dataGetNewGamesT', dataGetNewGamesT);
   return (
-    <>
-      <Grid item xs={6} sm={3}>
+    <Container>
+      {dataGetNewGamesT.NewGamesTournaments.map(item => (
         <Paper>
-          <EnterGamesForm />
+          <EnterGamesForm data={item} />
         </Paper>
-      </Grid>
-      <Grid item xs={6} sm={3}>
-        <Paper>xs=6</Paper>
-      </Grid>
-    </>
+      ))}
+    </Container>
   );
 };
+
+const Container = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px;
+  width: 100%;
+`;

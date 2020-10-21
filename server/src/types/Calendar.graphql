@@ -1,6 +1,19 @@
 type Query {
     Calendar(id: ID): Calendar
     TournamentGame(idTournament: ID, stage: ID): [Calendar]
+    NewGamesTournaments: [TournamentInfo]
+}
+
+type TournamentInfo {
+    id: Int
+    name: String
+    tour: [TourInfo]
+    game: [Calendar]
+}
+
+type TourInfo {
+    name: String
+    game: [Calendar]
 }
 
 input CalendarInput {

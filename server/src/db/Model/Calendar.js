@@ -14,6 +14,15 @@ Calendar.init(
     stage: {
       type: DataTypes.TEXT,
     },
+    date: {
+      type: DataTypes.TEXT,
+    },
+    homeScore: {
+      type: DataTypes.INTEGER,
+    },
+    guestScore: {
+      type: DataTypes.INTEGER,
+    },
   },
   {
     sequelize,

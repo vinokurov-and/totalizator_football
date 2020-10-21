@@ -18,7 +18,7 @@ const resolvers = {
   },
   Mutation: {
     addTournament: async (_, { name }, { user }) => {
-      if (user.isAdmin) throw new Error('Нет прав')
+      if (!user.isAdmin) throw new Error('not permitted')
       const tournament = await Tournament.create(
         {
           name: name,
